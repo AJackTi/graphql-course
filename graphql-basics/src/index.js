@@ -18,6 +18,20 @@ const users = [{
     email: 'mike@example.com'
 }]
 
+const comments = [{
+    id: '102',
+    text: 'This worked well for me. Thanks!'
+}, {
+    id: '103',
+    text: 'Glad you enjoyed it.'
+}, {
+    id: '104',
+    text: 'This did no work.'
+}, {
+    id: '105',
+    text: 'Nevermind. I got it to work.'
+}]
+
 const posts = [{
     id: '10',
     title: 'GraphQL 101',
@@ -43,6 +57,7 @@ const typeDefs = `
     type Query {
         users(query: String): [User!]!
         posts(query: String): [Post!]!
+        comments(query: String): [Comment!]!
         me: User!
         post: Post!
     }
@@ -61,6 +76,11 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+    }
+    
+    type Comment {
+        id: ID!
+        text: String!
     }
 `
 
@@ -86,6 +106,14 @@ const resolvers = {
                 const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
 
                 return isTitleMatch || isBodyMatch
+            })
+        },
+        comments(parent, args, ctx, info) {
+            if (!args.query)
+                return comments
+
+            return comments.filter((comment) => {
+                return comment.text.toLowerCase().includes(args.query.toLowerCase())
             })
         },
         me() {
